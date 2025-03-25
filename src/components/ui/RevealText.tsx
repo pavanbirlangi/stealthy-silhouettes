@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 import Motion from './motion';
 
@@ -10,6 +10,7 @@ interface RevealTextProps {
   delay?: number;
   once?: boolean;
   variant?: 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'zoom-in' | 'flip-up';
+  style?: CSSProperties;
 }
 
 const RevealText: React.FC<RevealTextProps> = ({
@@ -19,6 +20,7 @@ const RevealText: React.FC<RevealTextProps> = ({
   delay = 0,
   once = true,
   variant = 'fade-up',
+  style,
 }) => {
   return (
     <Motion
@@ -27,6 +29,7 @@ const RevealText: React.FC<RevealTextProps> = ({
       threshold={threshold}
       delay={delay}
       once={once}
+      style={style}
     >
       {children}
     </Motion>

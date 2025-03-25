@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 
 type AnimationVariant = 
@@ -20,6 +20,7 @@ interface MotionProps {
   duration?: number;
   threshold?: number;
   once?: boolean;
+  style?: CSSProperties;
 }
 
 const Motion: React.FC<MotionProps> = ({
@@ -30,6 +31,7 @@ const Motion: React.FC<MotionProps> = ({
   duration = 800,
   threshold = 0.1,
   once = true,
+  style,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -98,6 +100,7 @@ const Motion: React.FC<MotionProps> = ({
     <div 
       ref={ref} 
       className={cn(className)}
+      style={style}
     >
       {children}
     </div>
