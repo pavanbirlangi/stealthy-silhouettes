@@ -1,6 +1,7 @@
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
+import Motion from './motion';
 
 interface RevealTextProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface RevealTextProps {
   threshold?: number;
   delay?: number;
   once?: boolean;
+  variant?: 'fade-up' | 'fade-down' | 'fade-left' | 'fade-right' | 'zoom-in' | 'flip-up';
 }
 
 const RevealText: React.FC<RevealTextProps> = ({
@@ -16,49 +18,18 @@ const RevealText: React.FC<RevealTextProps> = ({
   threshold = 0.1,
   delay = 0,
   once = true,
+  variant = 'fade-up',
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              element.classList.add('revealed');
-            }, delay);
-            
-            if (once && observerRef.current) {
-              observerRef.current.unobserve(element);
-            }
-          } else if (!once) {
-            element.classList.remove('revealed');
-          }
-        });
-      },
-      { threshold }
-    );
-
-    observerRef.current.observe(element);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [threshold, delay, once]);
-
   return (
-    <div 
-      ref={ref} 
+    <Motion
       className={cn("scroll-reveal", className)}
+      variant={variant}
+      threshold={threshold}
+      delay={delay}
+      once={once}
     >
       {children}
-    </div>
+    </Motion>
   );
 };
 

@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -54,6 +53,7 @@
 
   body {
     @apply bg-kageyami-black text-kageyami-smoke font-sans antialiased;
+    cursor: none;
   }
 
   ::selection {
@@ -116,6 +116,18 @@
     transform: translateY(calc(var(--scroll) * -0.3px));
     will-change: transform;
   }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
 }
 
 .animate-delay-100 {
@@ -176,4 +188,112 @@
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Add custom cursor styles */
+body, a, button {
+  cursor: none;
+}
+
+#cursor-trail {
+  pointer-events: none;
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+/* New 3D transform classes */
+.rotateX-90 {
+  transform: rotateX(90deg);
+}
+
+.rotateX-0 {
+  transform: rotateX(0deg);
+}
+
+.rotate-12 {
+  transform: rotate(12deg);
+}
+
+.rotate-0 {
+  transform: rotate(0deg);
+}
+
+/* Add magnetic button effect */
+.magnetic-button {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Add text glitching effect */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
+.text-glitch:hover {
+  animation: glitch 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+/* Character split animation */
+.char-split {
+  display: inline-block;
+  transform: translateY(40px);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.revealed .char-split {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Add subtle text animation */
+@keyframes textFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.float-text {
+  animation: textFloat 4s ease-in-out infinite;
+}
+
+/* Custom cursor transitions */
+@keyframes cursorPing {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.cursor-ping {
+  animation: cursorPing 1s cubic-bezier(0, 0, 0.2, 1) infinite;
 }

@@ -1,8 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import RevealText from '../ui/RevealText';
+import Motion from '../ui/motion';
 
 const Collections = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   const collections = [
     {
       id: 'streetwear',
@@ -31,32 +34,52 @@ const Collections = () => {
   ];
 
   return (
-    <section id="collections" className="py-24 md:py-32 bg-kageyami-charcoal">
-      <div className="max-w-7xl mx-auto px-5 md:px-10">
-        <RevealText>
+    <section id="collections" className="py-24 md:py-32 bg-kageyami-charcoal relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-kageyami-red/3 blur-[100px] animate-pulse-subtle" />
+        <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-kageyami-red/3 blur-[100px] animate-pulse-subtle animation-delay-700" />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-5 md:px-10 relative z-10">
+        <Motion variant="fade-up">
           <span className="text-kageyami-red uppercase text-sm font-medium tracking-wider">Shop by Category</span>
-        </RevealText>
+        </Motion>
         
         <div className="flex flex-col md:flex-row md:items-end justify-between mt-3 mb-12">
-          <RevealText delay={100}>
+          <Motion variant="fade-up" delay={100}>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               Featured Collections
             </h2>
-          </RevealText>
+          </Motion>
           
-          <RevealText delay={200}>
-            <a href="#" className="inline-flex items-center text-kageyami-silver group mt-4 md:mt-0">
+          <Motion variant="fade-up" delay={200}>
+            <a href="#" className="inline-flex items-center text-kageyami-silver group mt-4 md:mt-0 relative overflow-hidden">
               <span className="font-medium tracking-wide group-hover:text-white transition-colors duration-300">VIEW ALL</span>
               <span className="ml-2 transform group-hover:translate-x-2 transition-transform duration-300">→</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-kageyami-red group-hover:w-full transition-all duration-500"></span>
             </a>
-          </RevealText>
+          </Motion>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 perspective-1000">
           {collections.map((collection, index) => (
-            <RevealText key={collection.id} delay={100 * (index + 1)}>
-              <CollectionCard collection={collection} />
-            </RevealText>
+            <Motion
+              key={collection.id}
+              variant={index % 2 === 0 ? 'fade-up' : 'fade-down'}
+              delay={150 * (index + 1)}
+              className="transform transition-all duration-700"
+              style={{ 
+                transformStyle: 'preserve-3d',
+                transform: hoveredIndex === index ? 'rotateY(5deg)' : 'rotateY(0)'
+              }}
+            >
+              <CollectionCard 
+                collection={collection} 
+                onHover={() => setHoveredIndex(index)}
+                onLeave={() => setHoveredIndex(null)}
+              />
+            </Motion>
           ))}
         </div>
       </div>
@@ -64,9 +87,22 @@ const Collections = () => {
   );
 };
 
-const CollectionCard = ({ collection }: { collection: { id: string; name: string; description: string; image: string } }) => (
-  <a href={`#${collection.id}`} className="group block">
-    <div className="overflow-hidden relative aspect-[3/4]">
+const CollectionCard = ({ 
+  collection, 
+  onHover, 
+  onLeave 
+}: { 
+  collection: { id: string; name: string; description: string; image: string };
+  onHover: () => void;
+  onLeave: () => void;
+}) => (
+  <a 
+    href={`#${collection.id}`} 
+    className="group block relative"
+    onMouseEnter={onHover}
+    onMouseLeave={onLeave}
+  >
+    <div className="overflow-hidden relative aspect-[3/4] shadow-lg shadow-black/30 transition-all duration-700 group-hover:shadow-xl group-hover:shadow-kageyami-red/10">
       <img 
         src={collection.image} 
         alt={collection.name} 
@@ -74,8 +110,11 @@ const CollectionCard = ({ collection }: { collection: { id: string; name: string
       />
       <div className="absolute inset-0 bg-gradient-to-t from-kageyami-black/90 via-kageyami-black/30 to-transparent opacity-90" />
       
-      <div className="absolute bottom-0 left-0 right-0 p-6">
-        <h3 className="font-semibold text-xl mb-2">{collection.name}</h3>
+      <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-transform duration-500 group-hover:translate-y-[-5px]">
+        <h3 className="font-semibold text-xl mb-2 relative">
+          {collection.name}
+          <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-kageyami-red group-hover:w-1/3 transition-all duration-500 ease-out"></span>
+        </h3>
         <p className="text-kageyami-silver text-sm">{collection.description}</p>
         
         <div className="mt-4 overflow-hidden">
@@ -84,10 +123,16 @@ const CollectionCard = ({ collection }: { collection: { id: string; name: string
           </span>
           <span className="inline-flex items-center text-kageyami-red transform translate-y-full group-hover:translate-y-0 absolute transition-transform duration-300">
             <span>Explore</span>
-            <span className="ml-1">→</span>
+            <span className="ml-1 transform group-hover:translate-x-1 transition-all duration-300">→</span>
           </span>
         </div>
       </div>
+
+      {/* Hover corner lines effect */}
+      <div className="absolute top-0 left-0 w-0 h-0 group-hover:w-[30px] group-hover:h-[30px] border-t-2 border-l-2 border-white/0 group-hover:border-white/80 transition-all duration-500 ease-out"></div>
+      <div className="absolute top-0 right-0 w-0 h-0 group-hover:w-[30px] group-hover:h-[30px] border-t-2 border-r-2 border-white/0 group-hover:border-white/80 transition-all duration-500 ease-out"></div>
+      <div className="absolute bottom-0 left-0 w-0 h-0 group-hover:w-[30px] group-hover:h-[30px] border-b-2 border-l-2 border-white/0 group-hover:border-white/80 transition-all duration-500 ease-out"></div>
+      <div className="absolute bottom-0 right-0 w-0 h-0 group-hover:w-[30px] group-hover:h-[30px] border-b-2 border-r-2 border-white/0 group-hover:border-white/80 transition-all duration-500 ease-out"></div>
     </div>
   </a>
 );
